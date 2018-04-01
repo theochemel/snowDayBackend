@@ -25,9 +25,9 @@ func fetchForecastAndReturnPrediction(w http.ResponseWriter, r *http.Request) {
   lon := vars["longitude"]
 
   forecast := pullDarkSkyForecast(lat, lon)
-  fmt.Println(forecast.Currently.Summary)
-  tomorrowPrediction := makePrediction(forecast)
+  formattedForecast := formatForecast(forecast)
+  fmt.Println(formattedForecast)
 
-  json.NewEncoder(w).Encode(tomorrowPrediction)
+  json.NewEncoder(w).Encode(formattedForecast)
 
 }

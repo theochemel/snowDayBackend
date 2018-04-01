@@ -10,6 +10,7 @@ import (
 )
 
 
+
 type weatherConditions struct {
 
   Currently struct {
@@ -28,11 +29,11 @@ type weatherConditions struct {
       Summary string `json: "summary"`
       PrecipProbability float64 `json: "precipProbabilty"`
       PrecipIntensity float64 `json: "precipIntensity"`
+      PrecipAccumulation float64 `json: precipAccumulation`
+      PrecipType string `json: precipType`
     } `json: "data"`
   } `json: "hourly"`
 }
-
-
 
 
 func pullDarkSkyForecast(lat string, lon string) weatherConditions {
