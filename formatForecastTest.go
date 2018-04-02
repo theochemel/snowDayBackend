@@ -1,36 +1,33 @@
 package main
 
-import (
-	"fmt"
-)
-
-
 type stormInfo struct {
-  StartTime int `json: "startTime"`
-  EndTime int `json: "endTime"`
-  PeakIntensity float64 `json: "peakIntensity"`
-  PeakIntesityTime int `json: "peakIntesityTime"`
-  TotalAccumulation float64 `json: "totalAccumulation"`
-  AverageProbability float64 `json: "averageProbability"`
+	TimeForecastRecieved int `json: "timeForecastRecieved"`
+	StormPossible bool `json: "stormPossible"`
+  StartTime int `json: "startTime,omitempty"`
+  EndTime int `json: "endTime,omitempty"`
+  PeakIntensity float64 `json: "peakIntensity,omitempty"`
+  PeakIntesityTime int `json: "peakIntesityTime,omitempty"`
+  TotalAccumulation float64 `json: "totalAccumulation,omitempty"`
+  AverageProbability float64 `json: "averageProbability,omitempty"`
 }
 
 func formatForecast(forecast weatherConditions) stormInfo {
   storm := stormInfo{}
+	storm.StormPossible = false
+	storm.TimeForecastRecieved = forecast.Hourly.Data[0].Time
   stormStarted := false
   totalProbability := 0.0
   numSamples := 0.0
   runningPeakIntensity := 0.0
   runningPeakIntensityTime := 0
-  fmt.Println(len(forecast.Hourly.Data))
 
   Loop:
     for _, point := range forecast.Hourly.Data {
-      fmt.Println(point)
       if point.PrecipProbability > 0.1 && point.PrecipType == "snow" {
         if stormStarted == false {
+					storm.StormPossible = true
           storm.StartTime = point.Time
           stormStarted = true
-          fmt.Println(storm.StartTime)
         }
         storm.TotalAccumulation += point.PrecipAccumulation
         totalProbability += point.PrecipProbability
@@ -44,16 +41,15 @@ func formatForecast(forecast weatherConditions) stormInfo {
       } else {
         if stormStarted == true {
           storm.EndTime = point.Time
-          fmt.Println(point.Time)
           break Loop
         }
       }
-    }
-
-  fmt.Println(storm.TotalAccumulation)
+		}
   storm.PeakIntensity = runningPeakIntensity
   storm.PeakIntesityTime = runningPeakIntensityTime
   storm.AverageProbability = totalProbability / numSamples
-  fmt.Println(storm)
+	if stormStarted == false {
+		storm.AverageProbability = 0.0
+	}
   return storm
 }

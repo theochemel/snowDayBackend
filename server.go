@@ -26,8 +26,10 @@ func fetchForecastAndReturnPrediction(w http.ResponseWriter, r *http.Request) {
 
   forecast := pullDarkSkyForecast(lat, lon)
   formattedForecast := formatForecast(forecast)
-  fmt.Println(formattedForecast)
 
-  json.NewEncoder(w).Encode(formattedForecast)
+  err := json.NewEncoder(w).Encode(formattedForecast)
+  if err != nil {
+    fmt.Println(err)
+  }
 
 }
