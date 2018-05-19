@@ -40,12 +40,13 @@ type weatherConditions struct {
 type stormInfo struct {
 	TimeForecastRecieved int `json:"timeForecastRecieved"`
 	StormPossible bool `json:"stormPossible"`
-  StartTime int `json:"startTime,omitempty"`
-  EndTime int `json:"endTime,omitempty"`
-  PeakIntensity float64 `json:"peakIntensity,omitempty"`
-  PeakIntesityTime int `json:"peakIntesityTime,omitempty"`
-  TotalAccumulation float64 `json:"totalAccumulation,omitempty"`
-  AverageProbability float64 `json:"averageProbability,omitempty"`
+  StartTime int `json:"startTime"`
+  EndTime int `json:"endTime"`
+  PeakIntensity float64 `json:"peakIntensity"`
+  PeakIntensityTime int `json:"peakIntensityTime"`
+  TotalAccumulation float64 `json:"totalAccumulation"`
+  AverageProbability float64 `json:"averageProbability"`
+  PrecipInfo[]float64 `json:"precipInfo"`
 }
 
 var darkSkyAPIKey = os.Getenv("DARKSKYAPIKEY")
@@ -114,9 +115,10 @@ func formatForecast(forecast weatherConditions) stormInfo {
           break Loop
         }
       }
+      storm.PrecipInfo = append(storm.PrecipInfo, point.PrecipIntensity)
 		}
   storm.PeakIntensity = runningPeakIntensity
-  storm.PeakIntesityTime = runningPeakIntensityTime
+  storm.PeakIntensityTime = runningPeakIntensityTime
   storm.AverageProbability = totalProbability / numSamples
 	if stormStarted == false {
 		storm.AverageProbability = 0.0
